@@ -1,1 +1,237 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"><title>Vue-dzen-restriction</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"> <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script> <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-analytics.js"></script> <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script> <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-firestore.js"></script> <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script> </head><body><div id="app"> <nav class="navbar navbar-light bg-light justify-content-start"> <a class="navbar-brand" href="#"> <img src="https://getbootstrap.com//docs/4.5/assets/brand/bootstrap-solid.svg" width="30" height="30" alt="" loading="lazy"> </a><div>Дзен Ограничения</div> </nav><div class="modal" id="addingModal" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Добавление</h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div><div class="modal-body"><p>Точно добавить {{addData.ruName}}?</p></div><div class="modal-footer"> <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button> <button type="button" class="btn btn-primary" @click="addItem">Добавить</button></div></div></div></div><div class="container"><h3>Ограничения</h3><ul class="list-group "><li v-for="restriction in restrictions" class="list-group-item"><div class="row justify-content-between "><div class=" col-6"> {{restriction.ruName}} <span class="max-count">макс. кол-во: {{restriction.maxCount}}</span></div><div class="col-6 right-col"><p>Уже съедено: {{restriction.count}}</p> <button type="button" class=" add-count btn btn-success" data-toggle="modal" data-target="#addingModal" @click="addModal(restriction)" v-if="restriction.count < restriction.maxCount"> <i class="fa fa-plus" aria-hidden="true"></i> </button></div></div></li></ul></div></div> <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script> <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> <script></script> <script>let app=new Vue({el:'#app',data:{restrictions:[],addData:{name:null,ruName:null,},fbData:null,ref:null,},mounted(){const vm=this var firebaseConfig={apiKey:"AIzaSyCiHrYTwisX9wniYo8cN7nlc6bWLu0Vc8s",authDomain:"vue-dzen-restriction.firebaseapp.com",databaseURL:"https://vue-dzen-restriction.firebaseio.com",projectId:"vue-dzen-restriction",storageBucket:"vue-dzen-restriction.appspot.com",messagingSenderId:"546683537555",appId:"1:546683537555:web:f17d266c5f7bcc22846566",measurementId:"G-GKRY0MQ9EV"};firebase.initializeApp(firebaseConfig) firebase.analytics() this.database=firebase.database() this.ref=firebase.database().ref();let fbData this.ref.on("value",function(snapshot){fbData=snapshot.val().data vm.fbData=fbData vm.restrictions=fbData.restrictions},function(error){console.log("Error: "+error.code);})},methods:{addModal:function(restriction){this.addData.name=restriction.name this.addData.ruName=restriction.ruName console.log(restriction)},addItem:function(){const vm=this console.log(this.addData) this.restrictions.map(function(restriction){if(restriction.name==vm.addData.name){restriction.count++ $('#addingModal').modal('hide') vm.updateData()}});},updateData:function(){this.database.ref('data').set({date:null,restrictions:this.restrictions});}}})</script> <style>.max-count{display:block;font-size:11px}.right-col{justify-content:flex-end;display:flex;align-items:center}.add-count{margin-left:10px}p{display:contents}</style></body></html>
+<!-- TODO
+#добавить количество, обновить в бд
+#месячный учет
+#оставшееся количество
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>Vue-dzen-restriction</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-analytics.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <!-- Just an image -->
+        <nav class="navbar navbar-light bg-light justify-content-start">
+            <a class="navbar-brand" href="#">
+                <img src="https://getbootstrap.com//docs/4.5/assets/brand/bootstrap-solid.svg" width="30" height="30"
+                    alt="" loading="lazy">
+            </a>
+            <div>Дзен Ограничения</div>
+        </nav>
+
+        <!-- модалка -->
+        <div class="modal" id="addingModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Добавление</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Точно добавить {{addData.ruName}}?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary" @click="addItem">Добавить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <div class="container">
+            <h3>Ограничения</h3>
+            <ul class="list-group ">
+                <li v-for="restriction in restrictions" class="list-group-item">
+                    <div class="row justify-content-between ">
+                        <div class=" col-6">
+                            {{restriction.ruName}}
+                            <span class="max-count">макс. кол-во: {{restriction.maxCount}}</span>
+                        </div>
+                        <div class="col-6 right-col">
+                            <p>Уже съедено: {{restriction.count}} </p>
+                            <button type="button" class=" add-count btn btn-success" data-toggle="modal"
+                                data-target="#addingModal" @click="addModal(restriction)"
+                                v-if="restriction.count < restriction.maxCount">
+
+                                <!-- <svg class="bi bi-plus" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                                  </svg> -->
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </li>
+
+            </ul>
+        </div>
+        <!-- <pre>
+            {{$data}}
+        </pre> -->
+
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+    <script>
+
+
+    </script>
+
+    <script>
+        let app = new Vue({
+            el: '#app',
+            data: {
+                restrictions: [],
+                addData: {
+                    name: null,
+                    ruName: null,
+                },
+                fbData: null,
+                ref: null,
+            },
+            mounted() {
+                const vm = this
+                // Your web app's Firebase configuration
+                var firebaseConfig = {
+                    apiKey: "AIzaSyCiHrYTwisX9wniYo8cN7nlc6bWLu0Vc8s",
+                    authDomain: "vue-dzen-restriction.firebaseapp.com",
+                    databaseURL: "https://vue-dzen-restriction.firebaseio.com",
+                    projectId: "vue-dzen-restriction",
+                    storageBucket: "vue-dzen-restriction.appspot.com",
+                    messagingSenderId: "546683537555",
+                    appId: "1:546683537555:web:f17d266c5f7bcc22846566",
+                    measurementId: "G-GKRY0MQ9EV"
+                };
+                // Initialize Firebase
+                firebase.initializeApp(firebaseConfig)
+                firebase.analytics()
+                this.database = firebase.database()
+                // установка рефа
+                this.ref = firebase.database().ref();
+
+                // получение данных из базы
+                let fbData
+                this.ref.on("value", function (snapshot) {
+
+                    fbData = snapshot.val().data
+                    vm.fbData = fbData
+                    // установка ограничений
+                    vm.restrictions = fbData.restrictions
+                }, function (error) {
+                    console.log("Error: " + error.code);
+                })
+
+                // database.ref('data').set({
+                //     date: name,
+                //     restrictions: [
+                //         {
+                //             name: "Шаурма",
+                //             maxCount: 4,
+                //         },
+                //         {
+                //             name: "Шоколадки",
+                //             maxCount: 4,
+                //         }
+                //     ]
+                // });
+
+            },
+            methods: {
+                addModal: function (restriction) {
+                    this.addData.name = restriction.name
+                    this.addData.ruName = restriction.ruName
+                    console.log(restriction)
+                },
+                addItem: function () {
+                    const vm = this
+                    console.log(this.addData)
+                    this.restrictions.map(function (restriction) {
+                        if (restriction.name == vm.addData.name) {
+                            restriction.count++
+                            $('#addingModal').modal('hide')
+                            vm.updateData()
+                        }
+                        // return name.length;
+                    });
+                },
+                updateData: function () {
+                    
+                this.database.ref('data').set({
+                    date: null,
+                    restrictions: this.restrictions
+                });
+                }
+            }
+        })
+
+
+    </script>
+
+
+    <style>
+        .max-count {
+            display: block;
+            font-size: 11px;
+        }
+
+        .right-col {
+            justify-content: flex-end;
+            display: flex;
+            align-items: center;
+        }
+
+        .add-count {
+            margin-left: 10px;
+        }
+
+        p {
+            display: contents;
+        }
+    </style>
+</body>
+
+</html>
