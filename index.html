@@ -37,12 +37,16 @@
 
         <div v-if='user.login'>
             <!-- Just an image -->
-            <nav class="navbar navbar-light bg-light justify-content-start">
-                <a class="navbar-brand" href="#">
-                    <img src="https://cdn.pixabay.com/photo/2016/09/20/03/12/yang-1681698_960_720.png" width="30"
-                        height="30" alt="" loading="lazy">
-                </a>
-                <div>Дзен Ограничения </div>
+            <nav class="navbar navbar-light bg-light justify-content-between">
+                <div class="justify-content-start">
+                    <a class="navbar-brand" href="#">
+                        <img src="https://cdn.pixabay.com/photo/2016/09/20/03/12/yang-1681698_960_720.png" width="30"
+                            height="30" alt="" loading="lazy">
+                    </a>
+                    <div style="display:inline">Дзен Ограничения / {{user.nick}}</div>
+                </div>
+
+                <a href=""  style="color: inherit;" @click='logout()'>Выйти</a>
             </nav>
 
             <!-- модалка -->
@@ -94,25 +98,18 @@
 
 
         <!-- Login -->
-        <div  v-else class="container" >
-            <form @submit.prevent="login()" >
+        <div v-else class="container">
+            <form @submit.prevent="login()">
                 <h3>Вход</h3>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Никнейм</label>
-                    <input
-                    v-model="user.nick"  
-                    class="form-control" 
-                    id="exampleInputEmail1" 
-                    aria-describedby="emailHelp">
-                    
+                    <input v-model="user.nick" class="form-control" id="exampleInputEmail1"
+                        aria-describedby="emailHelp">
+
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">Код</label>
-                    <input 
-                    type="password" 
-                    v-model="user.code"
-                    class="form-control" 
-                    id="exampleInputPassword1">
+                    <input type="password" v-model="user.code" class="form-control" id="exampleInputPassword1">
                 </div>
                 <button type="submit" class="btn btn-primary">Войти</button>
             </form>
@@ -165,6 +162,9 @@
             },
             mounted() {
                 const vm = this
+                //Проверка логина
+                this.checkLogin()
+
                 // Устанавливаем фунциональную дату
                 this.setDateSettings()
                 // Your web app's Firebase configuration
@@ -230,11 +230,26 @@
 
             },
             methods: {
-                login: function() {
-                    console.log(this.user)
-                    if(this.fbData.users[this.user.nick] && this.user.code == this.fbData.users[this.user.nick].code  ) {
-                        this.user.login = true
+                checkLogin: function () {
+                    if (localStorage.login) {
+                        console.log(localStorage.login)
+                        this.user = JSON.parse(localStorage.login)
                     }
+                },
+                login: function () {
+                    console.log(this.user)
+                    if (this.fbData.users[this.user.nick] && this.user.code == this.fbData.users[this.user.nick].code) {
+                        this.user.login = true
+                        localStorage.setItem('login', JSON.stringify(this.user));
+                    }
+                },
+                logout: function () {
+                    this.user = {
+                        nick: null,
+                        code: null,
+                        login: false,
+                    }
+                    delete localStorage.login
                 },
                 setDateSettings: function () {
                     let d = new Date()
