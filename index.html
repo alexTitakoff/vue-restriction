@@ -2,7 +2,11 @@
 #[готово]добавить количество, обновить в бд
 #[готово]месячный учет
 #[готова]оставшееся количество
-#[логинилка]
+# [готова] [логинилка]
+# [готова] логирование
+# вычет
+# добавление нового элемента
+# история
 -->
 
 
@@ -51,7 +55,7 @@
                 <!-- Just an image -->
 
 
-                <!-- модалка -->
+                <!-- модалка  добавления-->
                 <div class="modal" id="addingModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -62,11 +66,32 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <p>Точно добавить {{addData.ruName}}?</p>
+                                <p>Точно добавить {{changeDataItem.ruName}}?</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
                                 <button type="button" class="btn btn-primary" @click="addItem">Добавить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- модалка  удаления-->
+                <div class="modal" id="removingModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Удаление</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Точно удалить {{changeDataItem.ruName}}?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="button" class="btn btn-primary" @click="removeItem">Удалить</button>
                             </div>
                         </div>
                     </div>
@@ -87,9 +112,12 @@
                                         <button type="button" class=" add-count btn btn-success" data-toggle="modal"
                                             data-target="#addingModal" @click="addModal(restriction)"
                                             v-if="restriction.count < restriction.maxCount">
-
-
                                             <i class="fa fa-plus" aria-hidden="true"></i>
+                                        </button>
+                                        <button type="button" class=" add-count btn btn-danger" data-toggle="modal"
+                                            data-target="#removingModal" @click="removeModal(restriction)"
+                                            v-if="restriction.count > 0">
+                                            <i class="fa fa-minus" aria-hidden="true"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -127,9 +155,9 @@
             </form>
 
 
-            <!-- <pre>
+             <pre>
                 {{$data}}
-            </pre> -->
+            </pre> 
         </div>
 
 
@@ -164,7 +192,7 @@
                     login: false,
                 },
                 restrictions: [],
-                addData: {
+                changeDataItem: {
                     name: null,
                     ruName: null,
                 },
@@ -275,27 +303,44 @@
                 },
                 setDateSettings: function () {
                     let d = new Date()
-                    this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
-                    this.date = '/ ' + this.dict[d.getMonth()] + ' ' + d.getFullYear()
+                    // this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
+                    // this.date = '/ ' + this.dict[d.getMonth()] + ' ' + d.getFullYear()
 
                     // test
-                    // this.dateMonthYear = 'test'
-                    // this.date = 'test'
+                    this.dateMonthYear = 'test'
+                    this.date = 'test'
 
                 },
                 addModal: function (restriction) {
-                    this.addData.name = restriction.name
-                    this.addData.ruName = restriction.ruName
-                    console.log(restriction)
+                    this.changeDataItem.name = restriction.name
+                    this.changeDataItem.ruName = restriction.ruName
+                    
+                },
+                removeModal: function (restriction) {
+                    this.changeDataItem.name = restriction.name
+                    this.changeDataItem.ruName = restriction.ruName
+                    
                 },
                 addItem: function () {
                     const vm = this
-                    console.log(this.addData)
                     this.restrictions.map(function (restriction) {
-                        if (restriction.name == vm.addData.name) {
+                        if (restriction.name == vm.changeDataItem.name) {
                             restriction.count++
                             $('#addingModal').modal('hide')
                             vm.updateData()
+                            vm.setLog('addItem')
+                        }
+                        // return name.length;
+                    });
+                },
+                removeItem: function(){
+                    const vm = this
+                    this.restrictions.map(function (restriction) {
+                        if (restriction.name == vm.changeDataItem.name) {
+                            restriction.count--
+                            $('#removingModal').modal('hide')
+                            vm.updateData()
+                            vm.setLog('removeItem')
                         }
                         // return name.length;
                     });
@@ -305,7 +350,7 @@
                     this.database.ref('data_' + vm.dateMonthYear).set({
                         restrictions: this.restrictions
                     });
-                    this.setLog('updateItem')
+                    
                 },
                 setLog(par, val, db) {
                     let logs = JSON.parse(this.fbData.logs)
@@ -314,8 +359,13 @@
                         this.database.ref('logs').set(JSON.stringify(logs))
                     }
 
-                    if (par == 'updateItem') {
-                        logs.push(this.formatDate(new Date()) + ': юзер ' + this.user.nick + ' добавил ' + this.addData.ruName + ' в базу ' + 'data_' + this.dateMonthYear )
+                    if (par == 'addItem') {
+                        logs.push(this.formatDate(new Date()) + ': юзер ' + this.user.nick + ' добавил ' + this.changeDataItem.ruName + ' в базу ' + 'data_' + this.dateMonthYear )
+                        this.database.ref('logs').set(JSON.stringify(logs))
+                    }
+
+                    if (par == 'removeItem') {
+                        logs.push(this.formatDate(new Date()) + ': юзер ' + this.user.nick + ' удалил ' + this.changeDataItem.ruName + ' из базы ' + 'data_' + this.dateMonthYear )
                         this.database.ref('logs').set(JSON.stringify(logs))
                     }
                 },
