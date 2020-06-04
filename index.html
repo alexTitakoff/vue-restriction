@@ -39,7 +39,7 @@
                 <img src="https://cdn.pixabay.com/photo/2016/09/20/03/12/yang-1681698_960_720.png" width="30"
                     height="30" alt="" loading="lazy">
             </a>
-            <div>Дзен Ограничения</div>
+            <div>Дзен Ограничения  </div>
         </nav>
 
         <!-- модалка -->
@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="container">
-            <h3>Ограничения</h3>
+            <h3>Ограничения {{date}}</h3>
             <ul class="list-group ">
                 <li v-for="restriction in restrictions" class="list-group-item">
                     <div class="row justify-content-between ">
@@ -123,15 +123,14 @@
                 },
                 fbData: null,
                 ref: null,
-                dateMonthYear: null
+                dateMonthYear: null,
+                date: null,
+                dict: ['Январь' , 'Февраль' , 'Март' , 'Апрель' , 'Май' , 'Июнь' , 'Июль' , 'Август' , 'Сентябрь' , 'Октябрь' , 'Ноябрь' , 'Декабрь']
             },
             mounted() {
                 const vm = this
-                // Устанавливаем дату
-                let d = new Date()
-                this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
-
-
+                // Устанавливаем фунциональную дату
+                this.setDateSettings()
                 // Your web app's Firebase configuration
                 var firebaseConfig = {
                     apiKey: "AIzaSyCiHrYTwisX9wniYo8cN7nlc6bWLu0Vc8s",
@@ -164,27 +163,38 @@
 
 
                 //пример, для установки структуры
-                this.database.ref('data_' + this.dateMonthYear).set({
-                    'date': new Date(),
-                    "restrictions": [
-                        {
-                            "count": 1,
-                            "maxCount": 4,
-                            "name": "shaurma",
-                            "ruName": "Шаурма"
-                        },
-                        {
-                            "count": 3,
-                            "maxCount": 4,
-                            "name": "chocolate",
-                            "ruName": "Шоколадки"
-                        }
-                    ]
+                // this.database.ref('data_' + 'test').set({
+                //     'date': new Date(),
+                //     "restrictions": [
+                //         {
+                //             "count": 1,
+                //             "maxCount": 4,
+                //             "name": "shaurma",
+                //             "ruName": "Шаурма"
+                //         },
+                //         {
+                //             "count": 3,
+                //             "maxCount": 4,
+                //             "name": "chocolate",
+                //             "ruName": "Шоколадки"
+                //         }
+                //     ]
 
-                });
+                // });
 
             },
             methods: {
+                setDateSettings: function(){
+                    let d = new Date()
+                // this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
+                 //Дату число
+                // this.date = '/ ' + this.dict[d.getMonth()] + ' ' +  d.getFullYear()
+
+                // test
+                this.dateMonthYear = 'test'
+                this.date = 'test'
+
+                },
                 addModal: function (restriction) {
                     this.addData.name = restriction.name
                     this.addData.ruName = restriction.ruName
@@ -203,9 +213,8 @@
                     });
                 },
                 updateData: function () {
-
-                    this.database.ref('data').set({
-                        date: null,
+                    const vm = this
+                    this.database.ref('data_'+vm.dateMonthYear).set({
                         restrictions: this.restrictions
                     });
                 }
