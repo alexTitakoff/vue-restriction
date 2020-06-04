@@ -36,8 +36,8 @@
         <!-- Just an image -->
         <nav class="navbar navbar-light bg-light justify-content-start">
             <a class="navbar-brand" href="#">
-                <img src="https://getbootstrap.com//docs/4.5/assets/brand/bootstrap-solid.svg" width="30" height="30"
-                    alt="" loading="lazy">
+                <img src="https://cdn.pixabay.com/photo/2016/09/20/03/12/yang-1681698_960_720.png" width="30"
+                    height="30" alt="" loading="lazy">
             </a>
             <div>Дзен Ограничения</div>
         </nav>
@@ -62,12 +62,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
-
-
         <div class="container">
             <h3>Ограничения</h3>
             <ul class="list-group ">
@@ -83,10 +77,7 @@
                                 data-target="#addingModal" @click="addModal(restriction)"
                                 v-if="restriction.count < restriction.maxCount">
 
-                                <!-- <svg class="bi bi-plus" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
-                                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
-                                  </svg> -->
+                                
                                 <i class="fa fa-plus" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -95,10 +86,10 @@
                 </li>
 
             </ul>
-        </div>
-        <!-- <pre>
+        </div> 
+        <pre>
             {{$data}}
-        </pre> -->
+        </pre>
 
     </div>
 
@@ -132,9 +123,15 @@
                 },
                 fbData: null,
                 ref: null,
+                dateMonthYear: null
             },
             mounted() {
                 const vm = this
+                // Устанавливаем дату
+                let d = new Date()
+                this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
+
+
                 // Your web app's Firebase configuration
                 var firebaseConfig = {
                     apiKey: "AIzaSyCiHrYTwisX9wniYo8cN7nlc6bWLu0Vc8s",
@@ -157,27 +154,34 @@
                 let fbData
                 this.ref.on("value", function (snapshot) {
 
-                    fbData = snapshot.val().data
+                    fbData = snapshot.val()
                     vm.fbData = fbData
                     // установка ограничений
-                    vm.restrictions = fbData.restrictions
+                    vm.restrictions = fbData['data_'+vm.dateMonthYear].restrictions
                 }, function (error) {
                     console.log("Error: " + error.code);
                 })
 
-                // database.ref('data').set({
-                //     date: name,
-                //     restrictions: [
-                //         {
-                //             name: "Шаурма",
-                //             maxCount: 4,
-                //         },
-                //         {
-                //             name: "Шоколадки",
-                //             maxCount: 4,
-                //         }
-                //     ]
-                // });
+
+                //пример, для установки структуры
+                this.database.ref('data_' + this.dateMonthYear).set({
+                    'date': new Date(),
+                    "restrictions": [
+                        {
+                            "count": 1,
+                            "maxCount": 4,
+                            "name": "shaurma",
+                            "ruName": "Шаурма"
+                        },
+                        {
+                            "count": 3,
+                            "maxCount": 4,
+                            "name": "chocolate",
+                            "ruName": "Шоколадки"
+                        }
+                    ]
+
+                });
 
             },
             methods: {
@@ -199,11 +203,11 @@
                     });
                 },
                 updateData: function () {
-                    
-                this.database.ref('data').set({
-                    date: null,
-                    restrictions: this.restrictions
-                });
+
+                    this.database.ref('data').set({
+                        date: null,
+                        restrictions: this.restrictions
+                    });
                 }
             }
         })
