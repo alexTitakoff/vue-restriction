@@ -34,72 +34,84 @@
 <body>
 
     <div id="app">
+        <nav class="navbar navbar-light bg-light justify-content-between">
+            <div class="justify-content-start">
+                <a class="navbar-brand" href="#">
+                    <img src="https://cdn.pixabay.com/photo/2016/09/20/03/12/yang-1681698_960_720.png" width="30"
+                        height="30" alt="" loading="lazy">
+                </a>
+                <div style="display:inline">Дзен Ограничения / {{user.nick}}</div>
+            </div>
 
-        <div v-if='user.login'>
-            <!-- Just an image -->
-            <nav class="navbar navbar-light bg-light justify-content-between">
-                <div class="justify-content-start">
-                    <a class="navbar-brand" href="#">
-                        <img src="https://cdn.pixabay.com/photo/2016/09/20/03/12/yang-1681698_960_720.png" width="30"
-                            height="30" alt="" loading="lazy">
-                    </a>
-                    <div style="display:inline">Дзен Ограничения / {{user.nick}}</div>
-                </div>
+            <a href="" style="color: inherit;" @click.prevent='logout()'>Выйти</a>
+        </nav>
+        <div class="container">
+           
+            <div v-if='user.login'>
+                <!-- Just an image -->
 
-                <a href=""  style="color: inherit;" @click='logout()'>Выйти</a>
-            </nav>
 
-            <!-- модалка -->
-            <div class="modal" id="addingModal" tabindex="-1" role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Добавление</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Точно добавить {{addData.ruName}}?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                            <button type="button" class="btn btn-primary" @click="addItem">Добавить</button>
+                <!-- модалка -->
+                <div class="modal" id="addingModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Добавление</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Точно добавить {{addData.ruName}}?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="button" class="btn btn-primary" @click="addItem">Добавить</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Ограничения {{date}}</h3>
+                        <ul class="list-group ">
+                            <li v-for="restriction in restrictions" class="list-group-item">
+                                <div class="row justify-content-between ">
+                                    <div class=" col-6">
+                                        {{restriction.ruName}}
+                                        <span class="max-count">макс. кол-во: {{restriction.maxCount}}</span>
+                                    </div>
+                                    <div class="col-6 right-col">
+                                        <p>Уже съедено: {{restriction.count}} </p>
+                                        <button type="button" class=" add-count btn btn-success" data-toggle="modal"
+                                            data-target="#addingModal" @click="addModal(restriction)"
+                                            v-if="restriction.count < restriction.maxCount">
+
+
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div v-if="fbData !== null" class="col-md-6">
+                        <h3>Журнал</h3>
+                        <p style="display: block; font-size: 12px; margin-bottom: 0px;" v-for="log in niceLogs">
+                            {{log}}
+                        </p>
+                    </div>
+
+                </div>
             </div>
-            <div class="container">
-                <h3>Ограничения {{date}}</h3>
-                <ul class="list-group ">
-                    <li v-for="restriction in restrictions" class="list-group-item">
-                        <div class="row justify-content-between ">
-                            <div class=" col-6">
-                                {{restriction.ruName}}
-                                <span class="max-count">макс. кол-во: {{restriction.maxCount}}</span>
-                            </div>
-                            <div class="col-6 right-col">
-                                <p>Уже съедено: {{restriction.count}} </p>
-                                <button type="button" class=" add-count btn btn-success" data-toggle="modal"
-                                    data-target="#addingModal" @click="addModal(restriction)"
-                                    v-if="restriction.count < restriction.maxCount">
 
 
-                                    <i class="fa fa-plus" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
+            <!-- Login -->
 
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-
-
-        <!-- Login -->
-        <div v-else class="container">
-            <form @submit.prevent="login()">
+            <form v-else @submit.prevent="login()">
                 <h3>Вход</h3>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Никнейм</label>
@@ -113,11 +125,13 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Войти</button>
             </form>
+
+
+            <pre>
+                {{$data}}
+            </pre>
         </div>
 
-        <pre>
-            {{$data}}
-        </pre>
 
     </div>
 
@@ -158,7 +172,7 @@
                 ref: null,
                 dateMonthYear: null,
                 date: null,
-                dict: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+                dict: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             },
             mounted() {
                 const vm = this
@@ -193,10 +207,12 @@
                     vm.fbData = fbData
                     // установка ограничений
                     vm.restrictions = fbData['data_' + vm.dateMonthYear].restrictions
+
+                    // console.log(vm.fbData.logs)
+
                 }, function (error) {
                     console.log("Error: " + error.code);
                 })
-
 
                 //пример, для установки структуры
                 // this.database.ref('data_' + 'test').set({
@@ -229,6 +245,11 @@
                 // })
 
             },
+            computed: {
+                niceLogs() {
+                    return JSON.parse(this.fbData.logs).slice().reverse();
+                },
+            },
             methods: {
                 checkLogin: function () {
                     if (localStorage.login) {
@@ -242,6 +263,7 @@
                         this.user.login = true
                         localStorage.setItem('login', JSON.stringify(this.user));
                     }
+                    this.setLog('login')
                 },
                 logout: function () {
                     this.user = {
@@ -283,6 +305,28 @@
                     this.database.ref('data_' + vm.dateMonthYear).set({
                         restrictions: this.restrictions
                     });
+                    this.setLog('updateItem')
+                },
+                setLog(par, val, db) {
+                    let logs = JSON.parse(this.fbData.logs)
+                    if (par == 'login') {
+                        logs.push(this.formatDate(new Date()) + ': юзер ' + this.user.nick + ' зашел ')
+                        this.database.ref('logs').set(JSON.stringify(logs))
+                    }
+
+                    if (par == 'updateItem') {
+                        logs.push(this.formatDate(new Date()) + ': юзер ' + this.user.nick + ' добавил ' + this.addData.ruName + ' в базу ' + 'data_' + this.dateMonthYear )
+                        this.database.ref('logs').set(JSON.stringify(logs))
+                    }
+                },
+                formatDate: function (d) {
+                    const ye = new Intl.DateTimeFormat('ru', { year: 'numeric' }).format(d)
+                    const mo = new Intl.DateTimeFormat('ru', { month: '2-digit' }).format(d)
+                    const da = new Intl.DateTimeFormat('ru', { day: '2-digit' }).format(d)
+                    const h = new Intl.DateTimeFormat('ru', { hour: '2-digit' }).format(d)
+                    const m = new Intl.DateTimeFormat('ru', { minute: '2-digit' }).format(d)
+                    const s = new Intl.DateTimeFormat('ru', { second: '2-digit' }).format(d)
+                    return  da + "/" + mo + "/" + ye+' '+ h+':'+m+':'+s
                 }
             }
         })
