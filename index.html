@@ -127,9 +127,9 @@
             </form>
 
 
-            <pre>
+            <!-- <pre>
                 {{$data}}
-            </pre>
+            </pre> -->
         </div>
 
 
@@ -275,12 +275,12 @@
                 },
                 setDateSettings: function () {
                     let d = new Date()
-                    // this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
-                    // this.date = '/ ' + this.dict[d.getMonth()] + ' ' + d.getFullYear()
+                    this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
+                    this.date = '/ ' + this.dict[d.getMonth()] + ' ' + d.getFullYear()
 
                     // test
-                    this.dateMonthYear = 'test'
-                    this.date = 'test'
+                    // this.dateMonthYear = 'test'
+                    // this.date = 'test'
 
                 },
                 addModal: function (restriction) {
