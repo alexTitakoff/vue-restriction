@@ -286,6 +286,7 @@
           // for(key in fbDataObj){
           //   vm.restrictions.push(fbDataObj[key])  
           // }
+          console.log('data_' + vm.dateMonthYear)
           vm.restrictions = fbData['data_' + vm.dateMonthYear].restrictions
 
 
@@ -356,8 +357,8 @@
         },
         setDateSettings: function () {
           let d = new Date()
-          // this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
-          // this.date = '/ ' + this.dict[d.getMonth()] + ' ' + d.getFullYear()
+          this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
+          this.date = '/ ' + this.dict[d.getMonth()] + ' ' + d.getFullYear()
 
           // // test
           // this.dateMonthYear = 'test'
