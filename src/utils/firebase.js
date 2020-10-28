@@ -1,9 +1,4 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
-
-
+// Your web app's Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyCiHrYTwisX9wniYo8cN7nlc6bWLu0Vc8s",
   authDomain: "vue-dzen-restriction.firebaseapp.com",
@@ -18,13 +13,9 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 firebase.analytics()
 
-
-Vue.config.productionTip = false
-Vue.prototype.$firebase = firebase.database()
+let firebaseDatabase = firebase.database()
 
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+
+
+export default firebaseDatabase
