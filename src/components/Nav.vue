@@ -13,16 +13,6 @@
     </div>
   </nav>
 
-  <nav class="navbar navbar-light bg-light justify-content-between">
-    <div class="justify-content-start">
-      <a class="navbar-brand" href="#">
-
-      </a>
-      <!--<div style="display:inline">Дзен Ограничения / {{user.nick}}</div>-->
-    </div>
-
-    <!--<a href="" style="color: inherit;" @click.prevent='logout()'>Выйти</a>-->
-  </nav>
 </template>
 
 <script>
@@ -31,11 +21,29 @@
     methods:{
       getUserName() {
         return this.$store.state.user.name
-      }
+      },
+      logout: function () {
+        this.$store.commit('logout')
+        delete localStorage.user
+
+        let data = {
+          par:'logout',
+          username: this.$store.state.user.name,
+          firebase: this.$firebase
+        }
+
+        this.$store.dispatch('setLog',data)
+        this.$router.push('/login')
+
+
+      },
     }
   }
 </script>
 
 <style scoped>
+  nav {
+    background-color: #7952b3;
+  }
 
 </style>

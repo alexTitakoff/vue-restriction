@@ -19,6 +19,11 @@ export default new Vuex.Store({
 
       localStorage.setItem('user', JSON.stringify(user))
     },
+    logout(state) {
+      state.user.name = null
+      state.user.password = null
+      state.user.login = false
+    },
     setError(state, error) {
       state.error = error
     },
@@ -29,8 +34,7 @@ export default new Vuex.Store({
   actions: {
     async setLog ({dispatch, commit, state}, {par, username, firebase}) {
       try {
-        console.log(par, 'setlogin')
-        console.log(par)
+
         function formatDate(d) {
           const ye = new Intl.DateTimeFormat('ru', {year: 'numeric'}).format(d)
           const mo = new Intl.DateTimeFormat('ru', {month: '2-digit'}).format(d)
@@ -41,17 +45,24 @@ export default new Vuex.Store({
           return da + "/" + mo + "/" + ye + ' ' + h + ':' + m + ':' + s
         }
 
-        // let logs = JSON.parse(this.fbData.logs)
-        if (par === 'login') {
-          console.log(firebase, 'firebase')
-          // A post entry.
-          var logData = formatDate(new Date()) + ': юзер ' + username + ' зашел '
+        async function firebaseAddLog(logData) {
+
           // Get a key for a new Post.
           var newLogKey = firebase.ref().child('logs').push().key;
           // Write the new post's data simultaneously in the posts list and the user's post list.
           var updates = {};
           updates['/logs/' + newLogKey] = logData;
           return await firebase.ref().update(updates);
+        }
+
+        // let logs = JSON.parse(this.fbData.logs)
+        if (par === 'login') {
+         // A post entry.
+          firebaseAddLog(formatDate(new Date()) + ': юзер ' + username + ' зашел ')
+        }
+        if (par === 'logout') {
+          // A post entry.
+          firebaseAddLog(formatDate(new Date()) + ': юзер ' + username + ' вышел ')
         }
 
 
