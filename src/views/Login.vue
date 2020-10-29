@@ -53,13 +53,8 @@
       loginGo() {
         this.$store.commit('login', this.user)
         // this.setLog('login')
-        let data = {
-          par: 'login',
-          username: this.user.name,
-          firebase: this.$firebase
-        }
-        console.log(data, 'data')
-        this.$store.dispatch('setLog', data)
+
+        this.$setLog(': юзер ' + this.$store.state.user.name + ' зашел ')
         this.$router.push('/')
       },
 

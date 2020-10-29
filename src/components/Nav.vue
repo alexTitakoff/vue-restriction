@@ -23,14 +23,7 @@
         return this.$store.state.user.name
       },
       logout: function () {
-        let data = {
-          par: 'logout',
-          username: this.$store.state.user.name,
-          firebase: this.$firebase
-        }
-
-        this.$store.dispatch('setLog', data)
-
+        this.$setLog(': юзер ' + this.$store.state.user.name + ' вышел ')
         this.$store.commit('logout')
         delete localStorage.user
         this.$router.push('/login')

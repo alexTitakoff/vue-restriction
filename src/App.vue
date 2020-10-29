@@ -13,12 +13,12 @@
 
   export default {
     name: "App",
-    components:{
+    components: {
       Nav
     },
-    mounted(){
+    mounted() {
       // проверка сессии
-      if(localStorage.getItem('user')){
+      if (localStorage.getItem('user')) {
         this.$store.commit('login', JSON.parse(localStorage.getItem('user')))
         this.$router.push('/')
       } else {
@@ -29,6 +29,11 @@
 </script>
 
 <style lang="scss">
+  @media only screen and (min-width: 993px) {
+    .container {
+      width: 1000px;
+    }
+  }
 
   toast.red {
     background: red;

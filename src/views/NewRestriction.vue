@@ -45,7 +45,8 @@
         updates['/restrictions/' + newPostKey] = {
           name: this.name,
           maxCount: this.maxCount,
-          count: 0
+          count: 0,
+          key: newPostKey
         }
         this.$firebase.ref(this.$dbName).update(updates)
 

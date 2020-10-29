@@ -56,48 +56,17 @@
 
 
         <div class="row">
-
           <div class="col m6 s12">
             <h5>Ограничения {{date}}</h5>
             <router-link to="/new-restriction" class="waves-effect waves-light btn">Добавить</router-link>
 
+            <RestrictionList></RestrictionList>
+
+
             <h5>Действия {{date}}</h5>
             <a  class="waves-effect waves-light btn">Добавить</a>
 
-
-
-            <ul class="list-group ">
-              <li v-for="restriction in restrictions" class="list-group-item">
-                <div class="row justify-content-between ">
-                  <div class=" col-6">
-                    {{restriction.ruName}}
-                    <span class="max-count">макс. кол-во: {{restriction.maxCount}}</span>
-                    <span class="limit" v-if="restriction.count > restriction.maxCount">превышено на
-                      {{restrictionDiff(restriction.count,restriction.maxCount)}} </span>
-                  </div>
-                  <div class="col-6 right-col">
-                    <p>Уже съедено: {{restriction.count}} </p>
-
-                    <button type="button" class=" add-count btn btn-success" data-toggle="modal"
-                            data-target="#addingModal" @click="addModalCount(restriction)">
-                      <i class="fa fa-plus" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class=" add-count btn btn-danger" data-toggle="modal"
-                            data-target="#removingModal" @click="removeModalCount(restriction)"
-                            v-if="restriction.count > 0">
-                      <i class="fa fa-minus" aria-hidden="true"></i>
-                    </button>
-                  </div>
-                </div>
-
-              </li>
-            </ul>
-
-
           </div>
-
-
-
 
           <div class="col m6 s12">
             <Logs></Logs>
@@ -118,10 +87,12 @@
   // @ is an alias to /src
 
   import Logs from '../components/Logs'
+  import RestrictionList from '../components/RestrictionList'
   export default {
     name: 'Home',
     components: {
-      Logs
+      Logs,
+      RestrictionList
     },
     data: () => ({
 
@@ -218,14 +189,6 @@
         }
       },
 
-      logout: function () {
-        this.user = {
-          nick: null,
-          code: null,
-          login: false,
-        }
-        delete localStorage.login
-      },
       setDateSettings: function () {
         let d = new Date()
         this.dateMonthYear = '' + d.getMonth() + d.getFullYear()
@@ -238,16 +201,6 @@
       },
 
       //Добавление и удаление количества огранчений
-      addModalCount: function (restriction) {
-        this.changeDataItem.name = restriction.name
-        this.changeDataItem.ruName = restriction.ruName
-
-      },
-      removeModalCount: function (restriction) {
-        this.changeDataItem.name = restriction.name
-        this.changeDataItem.ruName = restriction.ruName
-
-      },
       addItemCount: function () {
         const vm = this
         for (key in this.restrictions) {

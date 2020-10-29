@@ -31,7 +31,7 @@ Vue.prototype.$setLog = function (message) {
     const h = new Intl.DateTimeFormat('ru', {hour: '2-digit'}).format(d)
     const m = new Intl.DateTimeFormat('ru', {minute: '2-digit'}).format(d)
     const s = new Intl.DateTimeFormat('ru', {second: '2-digit'}).format(d)
-    return da + "/" + mo + "/" + ye + ' ' + h + ':' + m + ':' + s
+    return da + "." + mo + "." + ye + ' ' + h + ':' + m + ':' + s
   }
 
   async function firebaseAddLog(logData) {
