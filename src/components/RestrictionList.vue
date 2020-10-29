@@ -1,20 +1,24 @@
+<!--suppress ALL -->
 <template>
   <div>
 
     <ul v-if="restrictions.length > 0" class="collection ">
-      <li class="collection-item" v-for="restriction in restrictions">
-        <div>{{restriction.name}}
+      <li class="collection-item" v-for="restriction in restrictionsObj">
+
+          <div class="decr">
+            {{restriction.name}}
+            <span>Количество: {{restriction.count}}</span>
+          </div>
           <a href="#!" class="secondary-content">
-            <i class="material-icons">add_circle</i>
-            <i class=" remove material-icons">remove_circle</i>
+            <i @click="addCount(restriction.key)"   class="material-icons">add_circle</i>
+            <i @click="removeCount(restriction.key)" class=" remove material-icons">remove_circle</i>
             <i @click="setRemoveKey(restriction.key)" data-target="remove" class="modal-trigger remove material-icons">delete</i>
 
           </a>
-        </div>
-      </li>
-      <button data-target="remove" class="btn modal-trigger">Modal</button>
 
-      <pre>{{$data}}</pre>
+      </li>
+
+      <!--<pre>{{$data}}</pre>-->
     </ul>
 
     <!-- Modal Structure -->
@@ -82,13 +86,28 @@
           for (let key in Obj) {
             Arr.push(Obj[key])
           }
+          //TODO: удалить массив если так и  не будет нужен
           vm.restrictions = Arr
           vm.restrictionsObj = Obj
           // ...
         })
         vm.initModals()
       },
-      remove(key) {
+      // увеличить количество
+      async addCount(key) {
+        let newCount = this.restrictionsObj[key].count + 1
+        this.restrictionsObj[key].count =  newCount
+        await this.$firebase.ref(this.$dbName + '/restrictions/'+key).update({count: newCount})
+      },
+      async removeCount(key) {
+        if(this.restrictionsObj[key].count === 0) {
+          return
+        }
+        let newCount = this.restrictionsObj[key].count - 1
+        this.restrictionsObj[key].count =  newCount
+        await this.$firebase.ref(this.$dbName + '/restrictions/'+key).update({count: newCount})
+      },
+      remove(key) {  // удаляем ограничение в базе
         firebase.database().ref(this.$dbName + '/restrictions/' + key).remove();
         this.restrictions = []
         this.removeKey = null
@@ -102,10 +121,20 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .collection-item {
     padding-right: 10px;
     padding-left: 10px;
+    display: flex;
+    justify-content: space-between;
+    .decr {
+      display: flex;
+      flex-wrap: wrap;
+      span {
+        width: 100%;
+        font-size: 12px;
+      }
+    }
   }
 
   .remove {

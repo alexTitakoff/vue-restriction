@@ -2,59 +2,6 @@
   <div>
       <div>
 
-        <!-- модалка добавления количества -->
-        <div class="modal" id="addingModal" tabindex="-1" role="dialog">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Добавление</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>Точно добавить {{changeDataItem.ruName}}?</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" @click="addItemCount">Добавить
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- модалка  удаления количества -->
-        <div class="modal" id="removingModal" tabindex="-1" role="dialog">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Удаление</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>Точно удалить {{changeDataItem.ruName}}?</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" @click="removeItemCount">Удалить
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
-
-
-
-
-
-
-
         <div class="row">
           <div class="col m6 s12">
             <h5>Ограничения {{date}}</h5>
@@ -118,65 +65,8 @@
       const vm = this
       //Проверка логина
       this.checkLogin()
-
       // Устанавливаем фунциональную дату
       this.setDateSettings()
-
-      // тестовый тоаст
-      // M.toast({html: 'I am a toast!'})
-
-      // получение данных из базы
-      let fbData
-      // this.$firebase.ref.on("value", function (snapshot) {
-      //
-      //   fbData = snapshot.val()
-      //   vm.fbData = fbData
-      //
-      //   // установка ограничений
-      //   // let fbDataObj = fbData['data_' + vm.dateMonthYear].restrictions
-      //   // for(key in fbDataObj){
-      //   //   vm.restrictions.push(fbDataObj[key])
-      //   // }
-      //   console.log('data_' + vm.dateMonthYear)
-      //   vm.restrictions = fbData['data_' + vm.dateMonthYear].restrictions
-      //
-      //
-      //   // console.log(vm.fbData.logs)
-      //
-      // }, function (error) {
-      //   console.log("Error: " + error.code);
-      // })
-
-
-      //пример, для установки структуры
-      // this.database.ref('data_' + 'test').set({
-      //     'date': new Date(),
-      //     "restrictions": [
-      //         {
-      //             "count": 1,
-      //             "maxCount": 4,
-      //             "name": "shaurma",
-      //             "ruName": "Шаурма"
-      //         },
-      //         {
-      //             "count": 3,
-      //             "maxCount": 4,
-      //             "name": "chocolate",
-      //             "ruName": "Шоколадки"
-      //         }
-      //     ]
-
-      // });
-
-      // //users
-      // this.database.ref('users').set({
-      //     nika: {
-      //         code: 2
-      //     },
-      //     alex: {
-      //         code: 1
-      //     }
-      // })
 
     },
     computed: {
@@ -200,55 +90,6 @@
 
       },
 
-      //Добавление и удаление количества огранчений
-      addItemCount: function () {
-        const vm = this
-        for (key in this.restrictions) {
-          if (this.restrictions[key].name == vm.changeDataItem.name) {
-            this.restrictions[key].count++
-            let updates = {};
-            updates['/restrictions/' + key] = this.restrictions[key];
-            this.database.ref('data_' + vm.dateMonthYear).update(updates)
-
-            $('#addingModal').modal('hide')
-            vm.setLog('addItemCount')
-          }
-        }
-
-        console.log()
-        return
-
-        this.restrictions.map(function (restriction) {
-          if (restriction.name == vm.changeDataItem.name) {
-            restriction.count++
-            $('#addingModal').modal('hide')
-            vm.updateData()
-            vm.setLog('addItemCount')
-          }
-          // return name.length;
-        });
-      },
-      removeItemCount: function () {
-        const vm = this
-        for (key in this.restrictions) {
-          if (this.restrictions[key].name == vm.changeDataItem.name) {
-            this.restrictions[key].count--
-            let updates = {};
-            updates['/restrictions/' + key] = this.restrictions[key];
-            this.database.ref('data_' + vm.dateMonthYear).update(updates)
-
-            $('#removingModal').modal('hide')
-            vm.setLog('addItemCount')
-          }
-        }
-      },
-      updateData: function () {                 // Deprecate or update this func
-        const vm = this
-        this.database.ref('data_' + vm.dateMonthYear).set({
-          restrictions: this.restrictions
-        });
-
-      },
       // Служебные методы
 
       restrictionDiff(count, max) {
