@@ -48,6 +48,10 @@
           count: 0
         }
         this.$firebase.ref(this.$dbName).update(updates)
+
+        this.$setLog(': юзер ' + this.$store.state.user.name + ' добавил ограничение ' + this.name + ' в базу ' + this.$dbName)
+
+        this.$router.push('/')
       },
       validateNewRestr: function () {
         if (this.name == null || this.maxCount == null) {
