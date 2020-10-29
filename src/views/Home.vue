@@ -1,7 +1,5 @@
 <template>
   <div>
-    <div class="container">
-
       <div>
 
         <!-- модалка добавления количества -->
@@ -48,31 +46,6 @@
           </div>
         </div>
 
-        <!-- модалка  добавления ограничения-->
-        <div class="modal" id="addRestrictModal" tabindex="-1" role="dialog">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Добавить Ограничение</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div class="form-group">
-                  <label for="name">Название ограничения</label>
-                  <input v-model="newRestr.ruName" class="form-control">
-                  <label for="name">Максимальное число</label>
-                  <input type="number" v-model="newRestr.maxCount" class="form-control">
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" @click="addRestrict">Добавить</button>
-              </div>
-            </div>
-          </div>
-        </div>
 
 
 
@@ -84,16 +57,15 @@
 
         <div class="row">
 
-
-
-          <div class="col-md-6">
+          <div class="col m6 s12">
             <h5>Ограничения {{date}}</h5>
-            <button style="margin-left: 0;
-                        margin-bottom: 20px;
-                        margin-top: 5px;" type="button" class=" add-count btn btn-success" data-toggle="modal"
-                    data-target="#addRestrictModal">
-              Добавить Ограничение
-            </button>
+            <router-link to="/new-restriction" class="waves-effect waves-light btn">Добавить</router-link>
+
+            <h5>Действия {{date}}</h5>
+            <a  class="waves-effect waves-light btn">Добавить</a>
+
+
+
             <ul class="list-group ">
               <li v-for="restriction in restrictions" class="list-group-item">
                 <div class="row justify-content-between ">
@@ -119,14 +91,15 @@
                 </div>
 
               </li>
-
             </ul>
+
+
           </div>
 
 
 
 
-          <div class="col-md-6">
+          <div class="col m6 s12">
             <Logs></Logs>
           </div>
 
@@ -136,7 +109,7 @@
 
       <!--<pre>{{$data}}</pre>-->
     </div>
-  </div>
+
 
 
 </template>
@@ -263,23 +236,7 @@
         // this.date = 'test'
 
       },
-      addRestrict: function () {
-        if (this.validateNewRestr() == false) {
-          this.toast = 'Поля должные быть заполнены'
-          $('.toast').toast('show')
-          return
-        }
 
-        let vm = this
-        this.newRestr.name = this.toTranslit(this.newRestr.ruName)
-        let newPostKey = this.database.ref('data_' + vm.dateMonthYear).child('restrictions').push().key
-        let updates = {};
-        updates['/restrictions/' + newPostKey] = this.newRestr
-        this.database.ref('data_' + vm.dateMonthYear).update(updates)
-
-        $('#addRestrictModal').modal('hide')
-        vm.setLog('addRestrict')
-      },
       //Добавление и удаление количества огранчений
       addModalCount: function (restriction) {
         this.changeDataItem.name = restriction.name
@@ -340,29 +297,7 @@
 
       },
       // Служебные методы
-      validateNewRestr: function () {
-        if (this.newRestr.ruName == null || this.newRestr.maxCount == null) {
-          return false
-        }
-        return true
-      },
-      toTranslit: function (text) {
-        return text.replace(/([а-яё])|([\s_-])|([^a-z\d])/gi,
-            function (all, ch, space, words, i) {
-              if (space || words) {
-                return space ? '-' : '';
-              }
-              var code = ch.charCodeAt(0),
-                  index = code == 1025 || code == 1105 ? 0 :
-                      code > 1071 ? code - 1071 : code - 1039,
-                  t = ['yo', 'a', 'b', 'v', 'g', 'd', 'e', 'zh',
-                    'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p',
-                    'r', 's', 't', 'u', 'f', 'h', 'c', 'ch', 'sh',
-                    'shch', '', 'y', '', 'e', 'yu', 'ya'
-                  ];
-              return t[index];
-            });
-      },
+
       restrictionDiff(count, max) {
         return count - max
       },

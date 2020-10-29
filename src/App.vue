@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <Nav/>
-    <router-view/>
+    <div class="container">
+      <router-view/>
+    </div>
+
   </div>
 </template>
 
@@ -26,5 +29,9 @@
 </script>
 
 <style lang="scss">
+
+  toast.red {
+    background: red;
+  }
 
 </style>

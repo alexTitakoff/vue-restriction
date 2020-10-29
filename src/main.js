@@ -21,6 +21,14 @@ firebase.analytics()
 
 Vue.config.productionTip = false
 Vue.prototype.$firebase = firebase.database()
+Vue.prototype.$dateMonth = dateMonth()
+Vue.prototype.$dbName =  'users/'+ JSON.parse(localStorage.getItem('user')).name + '/' + 'data_' + dateMonth()
+
+
+function dateMonth () {
+  let d = new Date()
+  return   (d.getMonth()+1) + '_' + d.getFullYear()
+}
 
 
 new Vue({

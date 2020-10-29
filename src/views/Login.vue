@@ -1,14 +1,25 @@
 <template>
-  <div class="row justify-content-center">
-    <form class="col-6 " @submit.prevent="login()">
+  <div class="row ">
+    <form class="col m6 s12 offset-m3 " @submit.prevent="login()">
       <h3>Вход</h3>
       <div class="form-group">
-        <input placeholder="Никнейм" v-model="user.name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-
+        <input
+                placeholder="Никнейм"
+                v-model="user.name"
+                class="form-control"
+                id="exampleInputEmail1"
+                aria-describedby="emailHelp"
+        >
       </div>
       <div class="form-group">
 
-        <input placeholder="Пароль" type="password" v-model="user.password" class="form-control" id="exampleInputPassword1">
+        <input
+                placeholder="Пароль"
+                type="password"
+                v-model="user.password"
+                class="form-control"
+                id="exampleInputPassword1"
+        >
       </div>
       <button type="submit" class="btn btn-primary">Войти</button>
     </form>
