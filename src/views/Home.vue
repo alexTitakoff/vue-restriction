@@ -3,15 +3,6 @@
     <div class="container">
 
       <div>
-        <!-- Just an image -->
-
-        <!-- тоаст уведомление -->
-        <div class="toast" autohide="true" role="alert" aria-live="assertive" aria-atomic="true">
-          <div class="toast-body">
-            {{toast}}
-          </div>
-        </div>
-
 
         <!-- модалка добавления количества -->
         <div class="modal" id="addingModal" tabindex="-1" role="dialog">
@@ -83,9 +74,20 @@
           </div>
         </div>
 
+
+
+
+
+
+
+
+
         <div class="row">
+
+
+
           <div class="col-md-6">
-            <h3>Ограничения {{date}}</h3>
+            <h5>Ограничения {{date}}</h5>
             <button style="margin-left: 0;
                         margin-bottom: 20px;
                         margin-top: 5px;" type="button" class=" add-count btn btn-success" data-toggle="modal"
@@ -120,11 +122,12 @@
 
             </ul>
           </div>
-          <div v-if="fbData !== null" class="col-md-6">
-            <h3>Журнал</h3>
-            <p style="display: block; font-size: 12px; margin-bottom: 0px;" v-for="log in niceLogs">
-              {{log}}
-            </p>
+
+
+
+
+          <div class="col-md-6">
+            <Logs></Logs>
           </div>
 
         </div>
@@ -141,9 +144,12 @@
 <script>
   // @ is an alias to /src
 
+  import Logs from '../components/Logs'
   export default {
     name: 'Home',
-    components: {},
+    components: {
+      Logs
+    },
     data: () => ({
 
       restrictions: [],
@@ -157,7 +163,6 @@
         maxCount: null,
         count: 0
       },
-      toast: null,
       fbData: null,
       ref: null,
       dateMonthYear: null,
@@ -173,6 +178,8 @@
       // Устанавливаем фунциональную дату
       this.setDateSettings()
 
+      // тестовый тоаст
+      // M.toast({html: 'I am a toast!'})
 
       // получение данных из базы
       let fbData
@@ -229,9 +236,7 @@
 
     },
     computed: {
-      niceLogs() {
-        return JSON.parse(this.fbData.logs).slice().reverse();
-      },
+
     },
     methods: {
       checkLogin: function () {
@@ -387,11 +392,6 @@
     margin-left: 10px;
   }
 
-  .toast {
-    position: absolute;
-    z-index: 99999999999999;
-    right: 10px;
-  }
 
   p {
     display: contents;
