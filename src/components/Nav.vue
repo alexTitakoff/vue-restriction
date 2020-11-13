@@ -1,14 +1,22 @@
 <template>
   <nav>
     <div class="nav-wrapper">
-      <router-link to="/" class="brand-logo">
+      <router-link to="/" class="logo">
         <img src="https://cdn.pixabay.com/photo/2016/09/20/03/12/yang-1681698_960_720.png"
              width="30"
              height="30"
              alt="" loading="lazy"> Дзен Ограничения | {{getUserName()}}
       </router-link>
-      <ul v-if="checkLogin()" id="nav-mobile" class="right hide-on-med-and-down">
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul v-if="checkLogin()" id="nav-mobile" class="right ">
+        <li><router-link  to="/logs" >Журнал</router-link></li>
         <li><a @click.prevent='logout()' href="sass.html">Выйти</a></li>
+      </ul>
+      <ul class="sidenav" id="mobile-demo">
+        <li><a href="sass.html">Sass</a></li>
+        <li><a href="badges.html">Components</a></li>
+        <li><a href="collapsible.html">Javascript</a></li>
+        <li><a href="mobile.html">Mobile</a></li>
       </ul>
     </div>
   </nav>
@@ -18,6 +26,10 @@
 <script>
   export default {
     name: "Nav",
+    mounted(){
+      var elems = document.querySelectorAll('.sidenav');
+      var instances = M.Sidenav.init(elems);
+    },
     methods: {
       getUserName() {
         return this.$store.state.user.name
@@ -38,7 +50,7 @@
 <style lang="scss" scoped>
   nav {
     background-color: #7952b3;
-    .brand-logo {
+    .logo {
       margin-left: 10px;
       font-size: 1rem;
 

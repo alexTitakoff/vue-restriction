@@ -1,31 +1,46 @@
 <!--suppress ALL -->
 <template>
-  <div>
+  <div class="list" >
 
-    <ul v-if="restrictions.length > 0" class="collection ">
-      <li class="collection-item" v-for="restriction in restrictionsObj">
+    <!--Старове представление в виде списка-->
+    <!--<ul v-if="restrictions.length > 0" class="collection ">-->
+      <!--<li class="collection-item" v-for="restriction in restrictionsObj">-->
 
-          <div class="decr">
+        <!--<div class="decr">-->
+          <!--{{restriction.name}}-->
+          <!--<span>Количество: {{restriction.count}}</span>-->
+        <!--</div>-->
+        <!--<a href="#!" class="secondary-content">-->
+          <!--<i @click="addCount(restriction.key)" class="material-icons">add_circle</i>-->
+          <!--<i @click="removeCount(restriction.key)" class=" remove material-icons">remove_circle</i>-->
+          <!--<i @click="setRemoveKey(restriction.key)" data-target="remove" class="modal-trigger remove material-icons">delete</i>-->
+
+        <!--</a>-->
+
+      <!--</li>-->
+
+      <!--&lt;!&ndash;<pre>{{$data}}</pre>&ndash;&gt;-->
+    <!--</ul>-->
+
+    <div
+            v-if="restrictions.length > 0"
+            class=" restriction btn waves-effect waves-light"
+            v-for="restriction in restrictionsObj">
             {{restriction.name}}
-            <span>Количество: {{restriction.count}}</span>
-          </div>
-          <a href="#!" class="secondary-content">
-            <i @click="addCount(restriction.key)"   class="material-icons">add_circle</i>
-            <i @click="removeCount(restriction.key)" class=" remove material-icons">remove_circle</i>
-            <i @click="setRemoveKey(restriction.key)" data-target="remove" class="modal-trigger remove material-icons">delete</i>
+      <span>{{restriction.count}}</span>
+      <div class="actions" >
+        <i @click="addCount(restriction.key)" class="material-icons large wh">add_circle</i>
+        <i @click="removeCount(restriction.key)" class="  material-icons large wh ">remove_circle</i>
+        <i @click="setRemoveKey(restriction.key)" data-target="" class="modal-trigger large wh material-icons">delete</i>
+      </div>
 
-          </a>
-
-      </li>
-
-      <!--<pre>{{$data}}</pre>-->
-    </ul>
+    </div>
 
     <!-- Modal Structure -->
     <div v-if="restrictionsObj !== null  " id="remove" class="modal">
       <div class="modal-content">
         <h4>Удаление</h4>
-        <p v-if="removeKey !== null" >Точно удалить {{restrictionsObj[removeKey].name}} ? </p>
+        <p v-if="removeKey !== null">Точно удалить {{restrictionsObj[removeKey].name}} ? </p>
       </div>
       <div class="modal-footer">
         <a href="#!" @click="remove(removeKey)" class="modal-close waves-effect waves-green btn-flat">Да</a>
@@ -33,32 +48,6 @@
     </div>
   </div>
 
-  <!--<ul class="list-group ">-->
-  <!--<li v-for="restriction in restrictions" class="list-group-item">-->
-  <!--<div class="row justify-content-between ">-->
-  <!--<div class=" col-6">-->
-  <!--{{restriction.ruName}}-->
-  <!--<span class="max-count">макс. кол-во: {{restriction.maxCount}}</span>-->
-  <!--<span class="limit" v-if="restriction.count > restriction.maxCount">превышено на-->
-  <!--{{restrictionDiff(restriction.count,restriction.maxCount)}} </span>-->
-  <!--</div>-->
-  <!--<div class="col-6 right-col">-->
-  <!--<p>Уже съедено: {{restriction.count}} </p>-->
-
-  <!--<button type="button" class=" add-count btn btn-success" data-toggle="modal"-->
-  <!--data-target="#addingModal" @click="addModalCount(restriction)">-->
-  <!--<i class="fa fa-plus" aria-hidden="true"></i>-->
-  <!--</button>-->
-  <!--<button type="button" class=" add-count btn btn-danger" data-toggle="modal"-->
-  <!--data-target="#removingModal" @click="removeModalCount(restriction)"-->
-  <!--v-if="restriction.count > 0">-->
-  <!--<i class="fa fa-minus" aria-hidden="true"></i>-->
-  <!--</button>-->
-  <!--</div>-->
-  <!--</div>-->
-
-  <!--</li>-->
-  <!--</ul>-->
 
 </template>
 
@@ -78,7 +67,7 @@
       setRemoveKey(key) {
         this.removeKey = key
       },
-      async getData(){
+      async getData() {
         let vm = this
         await this.$firebase.ref(this.$dbName + '/restrictions').once('value').then(function (snapshot) {
           let Arr = []
@@ -96,23 +85,23 @@
       // увеличить количество
       async addCount(key) {
         let newCount = this.restrictionsObj[key].count + 1
-        this.restrictionsObj[key].count =  newCount
-        await this.$firebase.ref(this.$dbName + '/restrictions/'+key).update({count: newCount})
+        this.restrictionsObj[key].count = newCount
+        await this.$firebase.ref(this.$dbName + '/restrictions/' + key).update({count: newCount})
       },
       async removeCount(key) {
-        if(this.restrictionsObj[key].count === 0) {
+        if (this.restrictionsObj[key].count === 0) {
           return
         }
         let newCount = this.restrictionsObj[key].count - 1
-        this.restrictionsObj[key].count =  newCount
-        await this.$firebase.ref(this.$dbName + '/restrictions/'+key).update({count: newCount})
+        this.restrictionsObj[key].count = newCount
+        await this.$firebase.ref(this.$dbName + '/restrictions/' + key).update({count: newCount})
       },
       remove(key) {  // удаляем ограничение в базе
         firebase.database().ref(this.$dbName + '/restrictions/' + key).remove();
         this.restrictions = []
         this.removeKey = null
         this.getData()
-        },
+      },
       initModals() {
         var elems = document.querySelectorAll('.modal');
         var instances = M.Modal.init(elems);
@@ -122,6 +111,11 @@
 </script>
 
 <style lang="scss" scoped>
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
   .collection-item {
     padding-right: 10px;
     padding-left: 10px;
@@ -139,5 +133,56 @@
 
   .remove {
     color: #F44336;
+  }
+
+  .restriction {
+    width: 31%;
+    height: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+    align-items: flex-end;
+    cursor: inherit;
+    /*margin: 0px 2px;*/
+    margin-right: 1%;
+    margin-bottom: 5px;
+
+    &:hover {
+      background: #26a69a;
+    }
+
+    span {
+      width: 100%;
+      line-height: 1px;
+    }
+
+    i {
+      position: relative;
+      top: -3px;
+      font-size: 22px;
+      width: 33%;
+      cursor: pointer;
+      &:nth-child(2) {
+        border-left: 2px solid darken(#26a69a, 8%);
+        border-right: 2px solid darken(#26a69a, 8%);
+      }
+
+    }
+
+    .remove {
+      color: #F44336;
+    }
+    .wh {
+      color: #fff;
+    }
+    .actions {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      height: 33px;
+      border-top: 2px solid darken(#26a69a, 8%);
+      align-items: baseline;
+    }
   }
 </style>

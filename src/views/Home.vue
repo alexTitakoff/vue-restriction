@@ -1,62 +1,37 @@
 <template>
   <div>
-      <div>
+    <div class="row">
+      <div class="col m6 s12 ">
+        <h5>Ограничения {{date}}</h5>
+        <router-link to="/new-restriction" class="btn-floating btn-medium waves-effect waves-light "><i class="material-icons">add</i></router-link>
 
-        <div class="row">
-          <div class="col m6 s12">
-            <h5>Ограничения {{date}}</h5>
-            <router-link to="/new-restriction" class="waves-effect waves-light btn">Добавить</router-link>
+        <br>
+        <br>
+        <!--<router-link to="/new-restriction" class="waves-effect waves-light btn">Добавить</router-link>-->
 
-            <RestrictionList></RestrictionList>
+        <RestrictionList></RestrictionList>
 
+        <h5>Действия {{date}}</h5>
+        <a class="waves-effect waves-light btn">Добавить</a>
 
-            <h5>Действия {{date}}</h5>
-            <a  class="waves-effect waves-light btn">Добавить</a>
-
-          </div>
-
-          <div class="col m6 s12">
-            <Logs></Logs>
-          </div>
-
-        </div>
       </div>
-
-
-      <!--<pre>{{$data}}</pre>-->
     </div>
 
-
+    <!--<pre>{{$data}}</pre>-->
+  </div>
 
 </template>
 
 <script>
   // @ is an alias to /src
-
-  import Logs from '../components/Logs'
   import RestrictionList from '../components/RestrictionList'
+
   export default {
     name: 'Home',
     components: {
-      Logs,
       RestrictionList
     },
     data: () => ({
-
-      restrictions: [],
-      changeDataItem: {
-        name: null,
-        ruName: null,
-      },
-      newRestr: {
-        name: null,
-        ruName: null,
-        maxCount: null,
-        count: 0
-      },
-      fbData: null,
-      ref: null,
-      dateMonthYear: null,
       date: null,
       dict: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
     }),
@@ -69,9 +44,7 @@
       this.setDateSettings()
 
     },
-    computed: {
-
-    },
+    computed: {},
     methods: {
       checkLogin: function () {
         if (!this.$store.state.user.login) {
@@ -120,7 +93,6 @@
   .add-count {
     margin-left: 10px;
   }
-
 
   p {
     display: contents;

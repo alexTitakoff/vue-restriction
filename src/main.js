@@ -22,7 +22,9 @@ firebase.analytics()
 Vue.config.productionTip = false
 Vue.prototype.$firebase = firebase.database()
 Vue.prototype.$dateMonth = dateMonth()
-Vue.prototype.$dbName =  'users/'+ JSON.parse(localStorage.getItem('user')).name + '/' + 'data_' + dateMonth()
+if(localStorage.getItem('user')) {
+  Vue.prototype.$dbName =  'users/'+ JSON.parse(localStorage.getItem('user')).name + '/' + 'data_' + dateMonth()
+}
 Vue.prototype.$setLog = function (message) {
   function formatDate(d) {
     const ye = new Intl.DateTimeFormat('ru', {year: 'numeric'}).format(d)
