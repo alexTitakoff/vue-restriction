@@ -56,6 +56,7 @@
 
         this.$setLog(': юзер ' + this.$store.state.user.name + ' зашел ')
         this.$router.push('/')
+  
       },
 
     }

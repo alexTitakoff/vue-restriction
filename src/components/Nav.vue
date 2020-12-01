@@ -10,13 +10,12 @@
       <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       <ul v-if="checkLogin()" id="nav-mobile" class="right ">
         <li><router-link  to="/logs" >Журнал</router-link></li>
-        <li><a @click.prevent='logout()' href="sass.html">Выйти</a></li>
+        <li><a @click.prevent='logout()' >Выйти</a></li>
       </ul>
-      <ul class="sidenav" id="mobile-demo">
-        <li><a href="sass.html">Sass</a></li>
-        <li><a href="badges.html">Components</a></li>
-        <li><a href="collapsible.html">Javascript</a></li>
-        <li><a href="mobile.html">Mobile</a></li>
+
+      <ul  v-if="checkLogin()" class="sidenav" id="mobile-demo">
+        <li><router-link  to="/logs" >Журнал</router-link></li>
+        <li><a @click.prevent='logout()'>Выйти</a></li>
       </ul>
     </div>
   </nav>

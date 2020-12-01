@@ -21,7 +21,7 @@
       if (localStorage.getItem('user')) {
         this.$store.commit('login', JSON.parse(localStorage.getItem('user')))
         this.$router.push('/')
-      } else {
+      } else if (this.$router.currentRoute.path !== '/login') {
         this.$router.push('/login')
       }
     }
