@@ -7,13 +7,16 @@
              height="30"
              alt="" loading="lazy"> Дзен Ограничения | {{getUserName()}}
       </router-link>
-      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+      <a v-if="checkLogin()" href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      
       <ul v-if="checkLogin()" id="nav-mobile" class="right ">
         <li><router-link  to="/logs" >Журнал</router-link></li>
         <li><a @click.prevent='logout()' >Выйти</a></li>
       </ul>
 
-      <ul  v-if="checkLogin()" class="sidenav" id="mobile-demo">
+      <ul   class="sidenav" id="mobile-demo">
+        <li><router-link  to="/" >Главная</router-link></li>
         <li><router-link  to="/logs" >Журнал</router-link></li>
         <li><a @click.prevent='logout()'>Выйти</a></li>
       </ul>
